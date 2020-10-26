@@ -1,0 +1,5 @@
+*.pyc
+gsheet-daily-pump-secret.json
+
+venv/
+.idea/
