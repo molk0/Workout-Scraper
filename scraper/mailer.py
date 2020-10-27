@@ -5,9 +5,8 @@ import logging
 context = ssl.create_default_context()
 
 
-
 def send_mail(alert: str, receiver_email: str) -> None:
-	"""Send an email """
+	"""Send an email to the given receiver email."""
 	server = smtplib.SMTP('smtp.gmail.com', 587)
 	try:
 		server.starttls(context=context)

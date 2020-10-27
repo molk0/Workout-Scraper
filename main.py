@@ -1,13 +1,13 @@
 import config
-from scraper import pump, gsheets
+from scraper import pump, gsheets, helper
 
 if __name__ == "__main__":
-    # LOCAL
-    # workout_block = pump.get_local_block()
 
-    # REMOTE
+    # Local
+    # workout_block = helper.get_block()
+
+    # Remotes no longer work
     workout_block = pump.get_workout_block()
-
     title, workout = pump.get_title_and_workout_details(workout_block)
 
     print("Starting...")
@@ -15,3 +15,5 @@ if __name__ == "__main__":
     worksheet = gsheets.get_worksheet(spreadsheet, title)
     gsheets.fill(worksheet, title, workout)
     print("Workout saved.")
+
+

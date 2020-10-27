@@ -1,5 +1,5 @@
 """
-Module used to parse the website and extract the workout details from it.
+Module used to parse the website and extract the workout details from the scraped data.
 """
 
 import bs4
@@ -103,16 +103,7 @@ def get_workout(exercise_details: list) -> dict:
             title_added = False
             continue
         current_list.append(element)
-    print(data)
     return data
-
-
-def get_local_block():
-    return BeautifulSoup(const.HTML, 'html.parser')
-
-
-def get_local_split():
-    return BeautifulSoup(const.LOCAL_SPLIT, 'html.parser')
 
 
 def get_first_split_day(split_block):
