@@ -84,7 +84,7 @@ def get_next_empty_cell(worksheet) -> list:
         # Found the first empty cell
         if val == '':
             _increment_cell_row(curr_cell)
-            val_second = worksheet.cell(curr_cell[0], curr_cell[1]).value
+            val_second = worksheet.cell(*curr_cell).value
             # Found the second empty cell
             if val_second == '':
                 empty = True
@@ -161,14 +161,14 @@ def check_for_errors(worksheet, cell) -> bool:
         if not val == '':
             cell_col = rep_range_cell[:]
             _increment_cell_column(cell_col)
-            val_col = worksheet.cell(cell_col[0], cell_col[1]).value
+            val_col = worksheet.cell(*cell_col).value
             if val_col == '':
                 errors_found = True
                 finished = True
             _increment_cell_row(rep_range_cell)
         else:
             _increment_cell_row(rep_range_cell)
-            val2 = worksheet.cell(rep_range_cell[0], rep_range_cell[1]).value
+            val2 = worksheet.cell(*rep_range_cell).value
             if val2 == '':
                 finished = True
             else:
