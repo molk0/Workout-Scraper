@@ -20,6 +20,7 @@ class Direction(Enum):
     NEW_LINE = 2
 
 
+# TODO: Cell should be an object
 INITIAL_CELL = [2, 2]
 
 
@@ -38,6 +39,9 @@ def get_worksheet(spreadsheet, title):
     """
     Get the most recent worksheet in the specified spreadsheet.
     If the title of the workout points to a new week, creates a new worksheet.
+
+    :param spreadsheet: Google spreadsheet in which a new worksheet (tab) should be created
+    :param title: Title of the workout
     """
     if title == const.FIRST_DAY:
         worksheet = create_new_week_worksheet(spreadsheet)
@@ -72,6 +76,8 @@ def get_next_empty_cell(worksheet) -> list:
     """
     Return reference to the next empty cell.
     Looks for the next empty vertical cell. Makes sure that there are two empty cells after the last cell with content.
+
+    :param worksheet: Active Google worksheet
     """
     curr_cell = list(INITIAL_CELL)
     if worksheet.cell(*curr_cell).value == '':
@@ -96,13 +102,24 @@ def get_next_empty_cell(worksheet) -> list:
 
 
 def write(worksheet, cell, data, direction):
-    """Write data to the given cell. Then update the cell cursor in the given direction."""
+    """Write data to the given cell. Then update the cell cursor in the given direction.
+
+    :param worksheet: Active Google worksheet
+    :param cell: Active cell to write to, cell format = [row, col]
+    :param data: Text data to write in a cell
+    :param direction: Direction in which to move the active cell cursor after the write
+    """
     worksheet.update_cell(cell[0], cell[1], data)
     _move_cell(cell, direction)
 
 
 def fill(worksheet, title, workout):
-    """Fill out the sheet with the title and workout details."""
+    """Fill out the sheet with the title and workout details.
+
+    :param worksheet: Active Google worksheet
+    :param title: Workout title
+    :param workout: Exercises dictionary where each key is an exercises and the value is the details
+    """
     curr_cell = get_next_empty_cell(worksheet)
     fill_date_and_title(worksheet, curr_cell, title)
     exercises_cell = curr_cell[:]
@@ -116,40 +133,52 @@ def fill(worksheet, title, workout):
 
 
 def fill_date_and_title(worksheet, cell, title):
-    """Fill out current date and workout title"""
+    """Fill out current date and workout title
+
+    :param worksheet: Active Google worksheet
+    :param cell: Active cell in the sheet
+    :param title: Workout title
+    """
     write(worksheet, cell, get_today_date(), Direction.DOWN)
     write(worksheet, cell, title, Direction.DOWN)
 
 
-def fill_exercise(worksheet, name, details, curr_cell):
-    """Fill out exercise detail portion of the workout."""
+def fill_exercise(worksheet, cell, name, details):
+    """Fill out exercise detail portion of the workout.
+
+    :param worksheet: Active Google worksheet
+    :param cell: Active cell to write to
+    :param name: Exercise name
+    :param details: Exercise details such as reps and tips
+    """
     # Only name and rep range
     if len(details) == 1:
-        write(worksheet, curr_cell, name, Direction.RIGHT)
-        write(worksheet, curr_cell, details[0], Direction.RIGHT)
+        write(worksheet, cell, name, Direction.RIGHT)
+        write(worksheet, cell, details[0], Direction.RIGHT)
 
     # More details than just the rep range
     else:
         # Write exercise name and save the next cell's location for rep range
-        write(worksheet, curr_cell, name, Direction.RIGHT)
-        note_cell = curr_cell[:]
+        write(worksheet, cell, name, Direction.RIGHT)
+        note_cell = cell[:]
 
         # Move two spots to the right
         for i in range(2):
-            _increment_cell_column(curr_cell)
+            _increment_cell_column(cell)
 
         # Rep range cell might not be in order, that's why it needs to go to previously referenced cell
         for note in details:
             if helper.is_rep_range(note):
                 write(worksheet, note_cell, note, Direction.RIGHT)
             else:
-                write(worksheet, curr_cell, note, Direction.RIGHT)
-    return curr_cell
+                write(worksheet, cell, note, Direction.RIGHT)
+    return cell
 
 
 def check_for_errors(worksheet, cell) -> bool:
     """
-    Check if there are any missing cells in the newly filled out sheet.
+    Check if there are any missing cells in the newly filled out sheet. Empty cell points to an error in the data.
+    Errors can occur if there was a mistake in parsing due to unrecognized data formatting.
     """
     errors_found = False
     rep_range_cell = cell[:]
