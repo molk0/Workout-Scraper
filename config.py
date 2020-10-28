@@ -7,4 +7,4 @@ EMAIL_PASS = "somePassword"
 
 SITE_LINK = "https://www.thequadguy.com/dailypump/"
 CLIENT_SECRET = 'gsheet-daily-pump-secret.json'
-SPREADSHEET_KEY = '1-mdjYdTwLTHkUrgs2gv1IwlvL_-WUKt7YWPfb4PYjAg'
+SPREADSHEET_KEY = 'spreadsheet-key'
